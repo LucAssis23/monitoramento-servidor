@@ -1,0 +1,78 @@
+#!/bin/bash
+
+BASE="/home/lucas/devops_estudos/scripts/monitoramento_servidor"
+SCRIPT_MONITOR="$BASE/scripts/monitoramento.sh"
+
+while true; do
+
+	clear
+
+	echo "     ===== MENU ====="
+	echo "1 - Verificar internet"
+	echo "2 - Verificar disco"
+	echo "3 - Verificar memória"
+	echo "4 - Executar monitoramento completo"
+	echo "5 - Ver alertas"
+	echo "6 - Ver relatórios de disco"
+	echo "7 - Ver relatórios de CPU"
+	echo "8 - Sair"
+	echo
+
+	read -p "Escolha uma das opções acima: " opcao
+	echo
+	echo "---- Você escolheu a opção $opcao ----"
+	echo
+
+	case "$opcao" in
+	1)
+		if ping -c 1 8.8.8.8 >/dev/null 2>&1; then
+			echo "Conexão com a internet OK"
+		else
+			echo "Conexão com a internet falhou!"
+		fi
+		;;
+	2)
+		df -h /
+		;;
+	3)
+		free -h | awk '/Mem|Swap/ {print $1, "Total:", $2, "Usada:", $3, "Livre:", $4}'
+		;;
+	4)
+  		"$SCRIPT_MONITOR"
+		echo "Monitoramento completo executado com sucesso."
+		
+		;;
+	5)
+		echo "==== ALERTAS ===="
+		echo
+		[ -f "$BASE/logs/alertas.log" ] && less "$BASE/logs/alertas.log" || echo "Nenhum alerta encontrado"
+		;;
+	6)
+		echo "==== RELATÓRIO DE DISCO ===="
+		echo
+		[ -f "$BASE/relatorios/disco.log" ] && less "$BASE/relatorios/disco.log" || echo "Nenhum relatório encontrado"
+		;;
+
+	7)
+		echo "==== RELATÓRIO DE CPU ===="
+		echo
+		[ -f "$BASE/relatorios/cpu.log" ] && less "$BASE/relatorios/cpu.log" || echo "Nenhum relatório encontrado"
+
+		;;
+
+	8)
+		echo "Saindo..."
+		exit 0
+		;;
+	*)
+		echo "Opção inválida"
+		;;
+	esac
+
+	echo
+	echo "-------------------------------------------"
+	echo
+
+	read -p "Pressione ENTER para continuar..."
+
+done

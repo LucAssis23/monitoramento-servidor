@@ -1,0 +1,4 @@
+logs/*.log
+relatorios/*.log
+relatorios/*.txt
+scripts/monitoramento_sistema/*.txt
